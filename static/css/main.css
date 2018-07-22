@@ -2,7 +2,7 @@ html,body{
     height:100%; 
     width:100%; 
 }
-
+a {text-decoration:none!important;}
 .backcolor{
     background-color: rgb(247, 247, 247);
 }
@@ -192,6 +192,7 @@ input{
     transition: 0.5s;
 }
 
+
 .front-buttons-comments{
     background-color: rgb(34, 184, 189);
     font-size: 1.7em;
@@ -216,6 +217,7 @@ input{
     /* text-align: right; */
     margin-top: 3%;
 }
+
 .buttons-position-comment{
     margin: 2% 0.5% 2% 0%;
 
@@ -367,8 +369,4 @@ input{
 textarea{
     width: 100%;
 }
-
-
-
-
 
