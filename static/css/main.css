@@ -2,10 +2,18 @@ html,body{
     height:100%; 
     width:100%; 
 }
-a {text-decoration:none!important;}
+
+a {
+    text-decoration:none!important;
+ }
 .backcolor{
     background-color: rgb(247, 247, 247);
 }
+
+a:link, a:link:hover { 
+    text-decoration: none 
+}
+
 .logo_font{
     font-size: 5em;
     font-family: 'Arial';
@@ -15,7 +23,6 @@ a {text-decoration:none!important;}
     letter-spacing: -2px;
     padding-left: 3.5%;
 }
-
 
 .logged-style{
     font-family: 'Arial';
