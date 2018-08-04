@@ -11,6 +11,11 @@ engine = create_engine(db_uri)
 #                'author VARCHAR NOT NULL,'
 #                'year INTEGER NOT NULL);')
 
+# engine.execute('CREATE TABLE "users" ('
+#                'username VARCHAR NOT NULL,'
+#                'email VARCHAR NOT NULL,'
+#                'password VARCHAR NOT NULL);')
+
 
 
 db = scoped_session(sessionmaker(bind=engine))
@@ -21,5 +26,6 @@ db = scoped_session(sessionmaker(bind=engine))
 #                    {"isbn": row['isbn'], "title": row['title'], "author": row['author'], "year": row['year']})
 #         print(row['isbn'], row['title'], row['author'], row['year'])
 #         db.commit()
+
 
 
