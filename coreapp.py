@@ -10,7 +10,7 @@ app = Flask(__name__)
 db_uri = 'postgres://mkpywnlvmhnhpf:90f16e461037e56efb35077fb3ebe4d491939728cf1650fa4f0d689c67f6abb8@ec2-54-228-251-254.eu-west-1.compute.amazonaws.com:5432/d6je9s4ur9vhgm'
 engine = create_engine(db_uri)
 db = scoped_session(sessionmaker(bind=engine))
-
+usernamedisplay = ''
 
 @app.route('/')
 def index():
@@ -22,11 +22,13 @@ def login():
         uname = request.form.get('username')
         upass = request.form.get('userpass')
         if uname and upass:
-            check = db.execute("SELECT username,password FROM users WHERE username=:unameval",{'unameval': uname})
-            if check.first() is None:
+            check = db.execute("SELECT username,password FROM users WHERE username=:unameval",{'unameval': uname}).first()
+            if check is None:
                 return render_template('invalid.html', message="Invalid username or password")
             else:
-                return render_template('invalid.html', message="Logged in")
+                global usernamedisplay
+                usernamedisplay = check['username']
+                return render_template('search.html',usernamedisplay=usernamedisplay)
 
         else:
             return render_template('invalid.html', message="All fields has to be filled in.")
@@ -63,8 +65,8 @@ def search():
 
 @app.route('/results')
 def results():
-    return render_template('results.html')
+    return render_template('results.html',usernamedisplay=usernamedisplay)
 
 @app.route('/book')
 def book():
-    return render_template('book.html')
+    return render_template('book.html',usernamedisplay=usernamedisplay)
