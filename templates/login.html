@@ -13,16 +13,19 @@
     <span class="text-style t3-font join-site-join-text">
       Log in
     </span> 
-    <div class="input-div">
-      <input type="text" placeholder="Username">
-    </div>
-    <div class="input-div">
-      <input type="password" placeholder="Password">
-    </div>
-    <div class="buttons-position">
-      <button class="front-buttons button-noborder">
-            Log in
-      </button>
-  </div>
+    <form action="{{url_for('login')}}" method="POST">
+        <div class="input-div">
+            <input type="text" placeholder="Username" name="username">
+          </div>
+          <div class="input-div">
+            <input type="password" placeholder="Password" name="userpass">
+          </div>
+          <div class="buttons-position">
+            <button class="front-buttons button-noborder">
+                  Log in
+            </button>
+        </div>
+    </form>
+
  </div>
  {% endblock %}

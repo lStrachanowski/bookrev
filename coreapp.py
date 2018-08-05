@@ -16,9 +16,22 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template('index.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        uname = request.form.get('username')
+        upass = request.form.get('userpass')
+        if uname and upass:
+            check = db.execute("SELECT username,password FROM users WHERE username=:unameval",{'unameval': uname})
+            if check.first() is None:
+                return render_template('invalid.html', message="Invalid username or password")
+            else:
+                return render_template('invalid.html', message="Logged in")
+
+        else:
+            return render_template('invalid.html', message="All fields has to be filled in.")
+    else:
+        return render_template('login.html')
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -27,7 +40,7 @@ def join():
         uemail = request.form.get('useremail')
         upass = request.form.get('userpass')
         check = db.execute("SELECT username,email FROM users WHERE username=:unameval OR email=:uemailval",{'unameval':uname, 'uemailval':uemail} )
-        if uname and not uemail and not upass:
+        if uname and uemail and upass:
             if check.first() is None:
                 db.execute("INSERT INTO users(username,email,password) VALUES (:username,:email,:password)",
                            {"username": uname, "email": uemail, "password": hashlib.md5(upass.encode()).hexdigest()})
