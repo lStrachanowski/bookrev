@@ -31,9 +31,9 @@ def join():
             db.execute("INSERT INTO users(username,email,password) VALUES (:username,:email,:password)",
                   {"username":uname, "email":uemail,"password":hashlib.md5(upass.encode()).hexdigest()})
             db.commit()
-            return uname + ' ' + uemail + ' ' + upass
+            return render_template('invalid.html', message="Account created.Log in with credentials")
         else:
-            return render_template('invalid.html')
+            return render_template('invalid.html', message="Email or user name is already in use. Please check new credentials.")
     else:
         return render_template('join.html')
 
