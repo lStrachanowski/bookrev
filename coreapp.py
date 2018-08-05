@@ -27,13 +27,19 @@ def join():
         uemail = request.form.get('useremail')
         upass = request.form.get('userpass')
         check = db.execute("SELECT username,email FROM users WHERE username=:unameval OR email=:uemailval",{'unameval':uname, 'uemailval':uemail} )
-        if check.first() is None:
-            db.execute("INSERT INTO users(username,email,password) VALUES (:username,:email,:password)",
-                  {"username":uname, "email":uemail,"password":hashlib.md5(upass.encode()).hexdigest()})
-            db.commit()
-            return render_template('invalid.html', message="Account created.Log in with credentials")
+        if uname and not uemail and not upass:
+            if check.first() is None:
+                db.execute("INSERT INTO users(username,email,password) VALUES (:username,:email,:password)",
+                           {"username": uname, "email": uemail, "password": hashlib.md5(upass.encode()).hexdigest()})
+                db.commit()
+                return render_template('invalid.html', message="Account created.Log in with credentials")
+            else:
+                return render_template('invalid.html',
+                                       message="Email or user name is already in use. Please check new credentials.")
         else:
-            return render_template('invalid.html', message="Email or user name is already in use. Please check new credentials.")
+            return render_template('invalid.html',message="All fields has to be filled in.")
+
+
     else:
         return render_template('join.html')
 
