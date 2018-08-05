@@ -199,6 +199,9 @@ input{
     transition: 0.5s;
 }
 
+.button-noborder{
+    border: none;
+}
 
 .front-buttons-comments{
     background-color: rgb(34, 184, 189);

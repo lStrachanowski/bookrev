@@ -33,7 +33,7 @@ def join():
             db.commit()
             return uname + ' ' + uemail + ' ' + upass
         else:
-            return "User or email in use please use new credentials"
+            return render_template('invalid.html')
     else:
         return render_template('join.html')
 
