@@ -13,19 +13,27 @@
     <span class="text-style t3-font join-site-join-text">
       Join Bookrev
     </span> 
-    <div class="input-div">
-      <input type="text" placeholder="Name">
-    </div>
-    <div class="input-div" >
-      <input type="text" placeholder="Email">
-    </div>
-    <div class="input-div">
-      <input type="password" placeholder="Password">
-    </div>
-    <div class="buttons-position">
-      <span class="front-buttons">
-        Create account
-      </span>
-  </div>
+    <form action="{{ url_for('join') }}" method="POST">
+        <div class="input-div">
+            <input type="text" placeholder="Name" name="username">
+          </div>
+          <div class="input-div" >
+            <input type="text" placeholder="Email" name="useremail">
+          </div>
+          <div class="input-div">
+            <input type="password" placeholder="Password" name="userpass">
+          </div>
+          <div class="buttons-position">
+            <button>
+              clisk
+
+            </button>
+            <span class="front-buttons">
+              Create account
+            </span>
+        </div>
+
+    </form>
+
  </div>
  {% endblock %}

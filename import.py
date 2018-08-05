@@ -12,13 +12,18 @@ engine = create_engine(db_uri)
 #                'year INTEGER NOT NULL);')
 
 # engine.execute('CREATE TABLE "users" ('
+#                'id SERIAL PRIMARY KEY,'
 #                'username VARCHAR NOT NULL,'
 #                'email VARCHAR NOT NULL,'
 #                'password VARCHAR NOT NULL);')
+#
+# engine.execute('DROP TABLE users')
 
-
-
-db = scoped_session(sessionmaker(bind=engine))
+# db = scoped_session(sessionmaker(bind=engine))
+# us = db.execute("SELECT * FROM users").fetchall()
+# for val in us:
+#     print(val)
+# db.commit()
 # with open('C:/Users/Tomasy/Desktop/project1/project1/books.csv', newline='') as csvfile:
 #     freader = csv.DictReader(csvfile, delimiter=',')
 #     for row in freader:
