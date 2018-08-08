@@ -1,4 +1,4 @@
-from flask import Flask, url_for
+from flask import Flask, session
 from flask import render_template
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -6,7 +6,7 @@ from flask import request
 import hashlib
 
 app = Flask(__name__)
-
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 db_uri = 'postgres://mkpywnlvmhnhpf:90f16e461037e56efb35077fb3ebe4d491939728cf1650fa4f0d689c67f6abb8@ec2-54-228-251-254.eu-west-1.compute.amazonaws.com:5432/d6je9s4ur9vhgm'
 engine = create_engine(db_uri)
 db = scoped_session(sessionmaker(bind=engine))
@@ -24,12 +24,15 @@ def login():
         if uname and upass:
             check = db.execute("SELECT username,password FROM users WHERE username=:unameval",{'unameval': uname}).first()
             if check is None:
-                return render_template('invalid.html', message="Invalid username or password")
+                return render_template('invalid.html', message="Check credentials, user don`t exist")
             else:
-                global usernamedisplay
-                usernamedisplay = check['username']
-                return render_template('search.html',usernamedisplay=usernamedisplay)
-
+                if hashlib.md5(upass.encode()).hexdigest() == check[1] and uname == check[0]:
+                    global usernamedisplay
+                    session[uname] = uname
+                    usernamedisplay = check['username']
+                    return render_template('search.html',usernamedisplay=usernamedisplay)
+                else:
+                    return render_template('invalid.html', message="Wrong user name or password")
         else:
             return render_template('invalid.html', message="All fields has to be filled in.")
     else:
@@ -59,14 +62,37 @@ def join():
         return render_template('join.html')
 
 
-@app.route('/search')
+@app.route('/search', methods=['GET','POST'])
 def search():
-    return render_template('search.html')
+
+    if usernamedisplay in session:
+        if request.method == 'GET':
+            return render_template('search.html')
+        else:
+            formval = request.form.get('searchfield')
+            sr = db.execute("SELECT * FROM books WHERE title LIKE title=:searchtitle",{'searchtitle':formval})
+            print(sr.first())
+
+    else:
+        return render_template('invalid.html', message="Log in first")
+
 
 @app.route('/results')
 def results():
-    return render_template('results.html',usernamedisplay=usernamedisplay)
+    if usernamedisplay in session:
+        return render_template('results.html',usernamedisplay=usernamedisplay)
+    else:
+        return render_template('invalid.html', message="Log in first")
 
 @app.route('/book')
 def book():
-    return render_template('book.html',usernamedisplay=usernamedisplay)
+    if usernamedisplay in session:
+        return render_template('book.html',usernamedisplay=usernamedisplay)
+    else:
+        return render_template('invalid.html',message="Log in first")
+
+@app.route('/logout')
+def logout():
+    global usernamedisplay
+    session.pop(usernamedisplay,None)
+    return render_template('index.html')

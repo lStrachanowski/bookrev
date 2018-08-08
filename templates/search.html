@@ -3,7 +3,7 @@
 
     <span class="logged-style">
         <span>{{usernamedisplay}}</span>
-        <span class="logout-color">Log out</span>
+        <a href="{{url_for('logout')}}"><span class="logout-color">Log out</span></a>
     </span>
     {% endblock %}
 
@@ -13,15 +13,17 @@
       <span class="text-style t3-font join-site-join-text">
           Search books
       </span> 
+      <form action="{{url_for('search')}}" method="POST">
     <div class="input-div">
-      <input type="text" placeholder="Enter book">
+      <input type="text" placeholder="Enter book" name="searchfield">
     </div>
 
     <div class="buttons-position">
-      <span class="front-buttons">
-        Search
-      </span>
+        <button class="front-buttons button-noborder">
+            search
+      </button>
   </div>
+  </form>
  </div>
  {% endblock %}
 
