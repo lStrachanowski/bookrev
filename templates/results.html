@@ -11,22 +11,16 @@
  <div class="flex-container result-site">
    <div class="exit-button push-right">
      <div class="x-position">
-        X
+        <a href="{{url_for('search')}}">X</a>
      </div>
    </div>
 
+  {% for val in loopvalues %}
     <div class="book-item">
-      Ksiązka nr 1
+      {{val.author}} " {{val.title}} "
     </div>
-    <div class="book-item">
-        Ksiązka nr 2
-      </div>
-      <div class="book-item">
-          Ksiązka nr 3
-        </div>
-        <div class="book-item">
-            Ksiązka nr 4
-          </div>
+  {% endfor %}  
+   
  </div>
  {% endblock %}
 

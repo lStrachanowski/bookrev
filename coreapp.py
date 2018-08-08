@@ -56,23 +56,20 @@ def join():
                                        message="Email or user name is already in use. Please check new credentials.")
         else:
             return render_template('invalid.html',message="All fields has to be filled in.")
-
-
     else:
         return render_template('join.html')
 
 
 @app.route('/search', methods=['GET','POST'])
 def search():
-
     if usernamedisplay in session:
         if request.method == 'GET':
             return render_template('search.html')
         else:
             formval = request.form.get('searchfield')
-            sr = db.execute("SELECT * FROM books WHERE title LIKE title=:searchtitle",{'searchtitle':formval})
-            print(sr.first())
-
+            fval = '%'+formval+'%'
+            sr = db.execute("SELECT * FROM books WHERE title LIKE :searchtitle",{'searchtitle':fval}).fetchall()
+            return render_template('results.html', loopvalues=sr)
     else:
         return render_template('invalid.html', message="Log in first")
 
