@@ -93,3 +93,9 @@ def logout():
     global usernamedisplay
     session.pop(usernamedisplay,None)
     return render_template('index.html')
+
+@app.route('/book/<isbn>')
+def book_route(isbn):
+    if usernamedisplay in session:
+        sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
+        return render_template('book.html',title=sr[0].title, year=sr[0].year, author=sr[0].author, bookisbn=sr[0].isbn)
