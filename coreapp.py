@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import request
 import hashlib
+import json
+import urllib
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
@@ -97,5 +99,10 @@ def logout():
 @app.route('/book/<isbn>')
 def book_route(isbn):
     if usernamedisplay in session:
+        api_request = 'https://www.goodreads.com/book/review_counts.json?isbns='+isbn+'&key=oVeYIluiDTM5qYO74SzGUA'
+        data = urllib.request.urlopen(api_request).read().decode()
+        goodreads_data = json.loads(data)
+        rating_data = goodreads_data["books"][0]
         sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
-        return render_template('book.html',title=sr[0].title, year=sr[0].year, author=sr[0].author, bookisbn=sr[0].isbn)
+        return render_template('book.html',title=sr[0].title, year=sr[0].year, author=sr[0].author, bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
+                               total=rating_data['work_reviews_count'])

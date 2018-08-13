@@ -32,5 +32,10 @@ engine = create_engine(db_uri)
 #         print(row['isbn'], row['title'], row['author'], row['year'])
 #         db.commit()
 
+import json
+import urllib
+d_u = 'https://www.goodreads.com/book/review_counts.json?isbns=0441172717&key=oVeYIluiDTM5qYO74SzGUA'
 
-
+data = urllib.request.urlopen(d_u).read().decode()
+j_data = json.loads(data)
+print(j_data["books"][0]["ratings_count"])
