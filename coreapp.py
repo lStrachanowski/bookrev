@@ -13,6 +13,7 @@ db_uri = 'postgres://mkpywnlvmhnhpf:90f16e461037e56efb35077fb3ebe4d491939728cf16
 engine = create_engine(db_uri)
 db = scoped_session(sessionmaker(bind=engine))
 usernamedisplay = ''
+searchvalues = ''
 
 @app.route('/')
 def index():
@@ -64,6 +65,7 @@ def join():
 
 @app.route('/search', methods=['GET','POST'])
 def search():
+    global searchvalues
     if usernamedisplay in session:
         if request.method == 'GET':
             return render_template('search.html')
@@ -71,6 +73,7 @@ def search():
             formval = request.form.get('searchfield')
             fval = '%'+formval+'%'
             sr = db.execute("SELECT * FROM books WHERE title LIKE :searchtitle",{'searchtitle':fval}).fetchall()
+            searchvalues = sr
             return render_template('results.html', loopvalues=sr)
     else:
         return render_template('invalid.html', message="Log in first")
@@ -79,7 +82,7 @@ def search():
 @app.route('/results')
 def results():
     if usernamedisplay in session:
-        return render_template('results.html',usernamedisplay=usernamedisplay)
+        return render_template('results.html',usernamedisplay=usernamedisplay, loopvalues=searchvalues)
     else:
         return render_template('invalid.html', message="Log in first")
 
