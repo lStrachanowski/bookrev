@@ -109,3 +109,16 @@ def book_route(isbn):
         sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
         return render_template('book.html',title=sr[0].title, year=sr[0].year, author=sr[0].author, bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
                                total=rating_data['work_reviews_count'])
+
+@app.route('/api/<isbn>')
+def api(isbn):
+    sr = db.execute("SELECT * FROM books WHERE isbn LIKE :searchisbn", {'searchisbn': isbn}).fetchall()
+    if sr:
+        api_request = 'https://www.goodreads.com/book/review_counts.json?isbns=' + isbn + '&key=oVeYIluiDTM5qYO74SzGUA'
+        data = urllib.request.urlopen(api_request).read().decode()
+        goodreads_data = json.loads(data)
+        rating_data = goodreads_data["books"][0]
+        api_data = {'title': sr[0].title,'author': sr[0].author, 'year':sr[0].year, 'isbn': sr[0].isbn,'reviev_count': rating_data['work_reviews_count'], 'avrage_score': rating_data['average_rating']}
+        return json.dumps(api_data)
+    else:
+        return render_template('invalid.html', message="No such book in database")
