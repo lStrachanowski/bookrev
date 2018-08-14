@@ -68,13 +68,13 @@ def search():
     global searchvalues
     if usernamedisplay in session:
         if request.method == 'GET':
-            return render_template('search.html')
+            return render_template('search.html',usernamedisplay=usernamedisplay)
         else:
             formval = request.form.get('searchfield')
             fval = '%'+formval+'%'
             sr = db.execute("SELECT * FROM books WHERE title LIKE :searchtitle",{'searchtitle':fval}).fetchall()
             searchvalues = sr
-            return render_template('results.html', loopvalues=sr)
+            return render_template('results.html', loopvalues=sr, usernamedisplay=usernamedisplay)
     else:
         return render_template('invalid.html', message="Log in first")
 
@@ -108,7 +108,7 @@ def book_route(isbn):
         rating_data = goodreads_data["books"][0]
         sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
         return render_template('book.html',title=sr[0].title, year=sr[0].year, author=sr[0].author, bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
-                               total=rating_data['work_reviews_count'])
+                               total=rating_data['work_reviews_count'],usernamedisplay=usernamedisplay)
 
 @app.route('/api/<isbn>')
 def api(isbn):
