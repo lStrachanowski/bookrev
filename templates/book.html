@@ -1,64 +1,77 @@
-{% extends 'layout.html' %}
-{% block header %}
+{% extends 'layout.html' %} {% block header %}
 
-    <span class="logged-style">
-        <span>{{usernamedisplay}}</span>
-        <a href="{{url_for('index')}}"><span class="logout-color">Log out</span></a>
-    </span>
-{% endblock %}
-
-{% block maincontent %}
- <div class="book-flex-container">
+<span class="logged-style">
+    <span>{{usernamedisplay}}</span>
+    <a href="{{url_for('index')}}">
+        <span class="logout-color">Log out</span>
+    </a>
+</span>
+{% endblock %} {% block maincontent %}
+<div class="book-flex-container">
     <div class="exit-button push-right">
         <div class="x-position">
             <a href="{{url_for('results')}}">X</a>
         </div>
-      </div>
- </div>
- <div class="book-flex-container">
-   <div class="book-flex-container-item">
-    "{{title}}" - {{author}}
-   </div>
-
-   <div class="book-flex-container-item">
-     <p>Rok publikacji: {{year}}</p>
-     <p>ISBN:{{bookisbn}}</p>
-   </div>
-
-   <div class="book-flex-container-item">
-     <p class="score">{{rating}} / 5</p> 
-     <p class="count">{{total}}</p> 
-  </div>
-  <div class="book-flex-container-item">
-      Rate book:
-      <div class="book-flex-container container-override">
-        <div class="score-style">1</div>
-        <div class="score-style">2</div>
-        <div class="score-style">3</div>
-        <div class="score-style">4</div>
-        <div class="score-style">5</div>
-      </div>
-   </div>
-   <div class="book-flex-container-item">
-     <p class="date-format">12.06.2018   user:APK_p86</p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet consequat metus. Maecenas vel pulvinar diam. Vestibulum ultrices, lorem vitae ullamcorper faucibus, lorem elit efficitur elit, sed porttitor enim justo id tellus. Praesent tempor metus vitae tellus placerat ornare. Duis id gravida dolor.
-   </div>
-
-   <div class="book-flex-container-item">
-    <p class="date-format">Add comment</p>
-    <div>
-      <textarea rows="4" class="textarea-forma"></textarea>
     </div>
-   
-    </div>
+</div>
+<div class="book-flex-container">
     <div class="book-flex-container-item">
-        <div class="buttons-position-comment">
-            <span class="front-buttons-comments">
-                Add comment
-            </span>
-        </div>
+        "{{title}}" - {{author}}
     </div>
 
- </div>
- {% endblock %}
+    <div class="book-flex-container-item">
+        <p>Rok publikacji: {{year}}</p>
+        <p>ISBN:{{bookisbn}}</p>
+    </div>
 
+    <div class="book-flex-container-item">
+        <p class="score">{{rating}} / 5</p>
+        <p class="count">{{total}}</p>
+    </div>
+
+    <div class="book-flex-container-item">
+        <p class="date-format">12.06.2018 user:APK_p86</p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet consequat metus. Maecenas vel pulvinar diam. Vestibulum
+        ultrices, lorem vitae ullamcorper faucibus, lorem elit efficitur elit, sed porttitor enim justo id tellus. Praesent
+        tempor metus vitae tellus placerat ornare. Duis id gravida dolor.
+    </div>
+        {% if user_score %}
+        <div class="book-flex-container-item">
+                Rate book:
+                <div class="book-flex-container container-override">
+                  Your rate:  {{user_score}}
+                </div>
+        </div>
+        {% else %}
+            <div class="book-flex-container-item">
+                    Rate book:
+                    <div class="book-flex-container container-override">
+                        <a href="{{url_for('rating',rating=1,isbn=bookisbn)}}"><div class="score-style" name="1" type="submit">1</div></a>
+                        <a href="{{url_for('rating',rating=2,isbn=bookisbn)}}"><div class="score-style" name="2" type="submit">2</div></a>
+                        <a href="{{url_for('rating',rating=3,isbn=bookisbn)}}"><div class="score-style" name="3" type="submit">3</div></a>
+                        <a href="{{url_for('rating',rating=4,isbn=bookisbn)}}"><div class="score-style" name="4" type="submit">4</div></a>
+                        <a href="{{url_for('rating',rating=5,isbn=bookisbn)}}"><div class="score-style" name="5" type="submit">5</div></a>
+                    </div>
+            </div>
+        {% endif %}    
+    <div class="book-flex-container-item">
+         <form action="{{url_for('book_route',isbn=bookisbn)}}" method="POST">
+        <p class="date-format">Add comment</p>
+            <div>
+                <textarea rows="4" class="textarea-forma" name="textfield"></textarea>
+            </div>
+    <!-- </div> -->
+    <!-- <div class="book-flex-container-item"> -->
+        <div class="buttons-position-comment">
+        
+            <button class="front-buttons-comments">
+                Add comment
+            </button>
+        </div>
+        </form>
+    </div>
+    
+
+
+</div>
+{% endblock %}

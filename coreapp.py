@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask, session, redirect,url_for
 from flask import render_template
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -6,6 +6,8 @@ from flask import request
 import hashlib
 import json
 import urllib
+import time
+
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
@@ -36,6 +38,7 @@ def login():
                     return render_template('search.html',usernamedisplay=usernamedisplay)
                 else:
                     return render_template('invalid.html', message="Wrong user name or password")
+            db.commmit()
         else:
             return render_template('invalid.html', message="All fields has to be filled in.")
     else:
@@ -59,6 +62,7 @@ def join():
                                        message="Email or user name is already in use. Please check new credentials.")
         else:
             return render_template('invalid.html',message="All fields has to be filled in.")
+
     else:
         return render_template('join.html')
 
@@ -99,16 +103,54 @@ def logout():
     session.pop(usernamedisplay,None)
     return render_template('index.html')
 
-@app.route('/book/<isbn>')
+@app.route('/rating/<rating>/<isbn>', methods=['GET','POST'])
+def rating(rating=None,isbn=None):
+    global usernamedisplay
+    sr = db.execute("SELECT * FROM reviews WHERE isbn=:searchisbn", {'searchisbn':isbn}).fetchall()
+    user_id = db.execute("SELECT id FROM users WHERE username=:unameval",{'unameval': usernamedisplay}).first()
+    if sr:
+        for value in sr:
+            if(value[1] == str(user_id[0])):
+                return redirect(url_for('book_route',isbn=isbn))
+        else:
+            print('conditino don`t works')
+            db.execute("INSERT INTO reviews(isbn,rating,userid) VALUES(:isbn,:rating,:userid)",{"isbn":isbn, "rating":rating,"userid":user_id[0]})
+            db.commit()
+            return redirect(url_for('book_route',isbn=isbn))     
+    else:
+        db.execute("INSERT INTO reviews(isbn,rating,userid) VALUES(:isbn,:rating,:userid)",{"isbn":isbn, "rating":rating,"userid":user_id[0]})
+        db.commit()
+        return redirect(url_for('book_route',isbn=isbn))
+
+
+@app.route('/book/<isbn>', methods=['GET','POST'])
 def book_route(isbn):
     if usernamedisplay in session:
-        api_request = 'https://www.goodreads.com/book/review_counts.json?isbns='+isbn+'&key=oVeYIluiDTM5qYO74SzGUA'
-        data = urllib.request.urlopen(api_request).read().decode()
-        goodreads_data = json.loads(data)
-        rating_data = goodreads_data["books"][0]
-        sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
-        return render_template('book.html',title=sr[0].title, year=sr[0].year, author=sr[0].author, bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
-                               total=rating_data['work_reviews_count'],usernamedisplay=usernamedisplay)
+        if request.method == 'GET':
+            api_request = 'https://www.goodreads.com/book/review_counts.json?isbns=' + isbn + '&key=oVeYIluiDTM5qYO74SzGUA'
+            data = urllib.request.urlopen(api_request).read().decode()
+            goodreads_data = json.loads(data)
+            rating_data = goodreads_data["books"][0]
+            u_score = None
+            sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
+            ur = db.execute("SELECT * FROM reviews WHERE isbn=:searchisbn", {'searchisbn':isbn}).fetchall()
+            user_id = db.execute("SELECT id FROM users WHERE username=:unameval",{'unameval': usernamedisplay}).first()
+            if ur:
+                for value in ur:
+                    if value[1] == str(user_id[0]):
+                        u_score = value[3]
+            return render_template('book.html', title=sr[0].title, year=sr[0].year, author=sr[0].author,
+                                   bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
+                                   total=rating_data['work_reviews_count'], usernamedisplay=usernamedisplay,user_score=u_score)
+
+        else:
+            post_time = time.asctime(time.localtime(time.time()))
+            comment_text = request.form.get('textfield')
+            # rating_value =
+
+            # db.execute("INSERT INTO reviews(isbn,userid,comment,rating,timestamp) VALUES (:isbn,:userid,:comment,:rating,:timestamp)",
+            # {'isbn': 123,'userid':id,'comment':comment_text, 'rating':5,'timestamp':post_time})
+            return 'comment added'
 
 @app.route('/api/<isbn>')
 def api(isbn):

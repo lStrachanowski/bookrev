@@ -20,7 +20,7 @@ engine = create_engine(db_uri)
 # engine.execute('DROP TABLE users')
 
 # db = scoped_session(sessionmaker(bind=engine))
-# us = db.execute("SELECT * FROM users").fetchall()
+# us = db.execute("SELECT * FROM reviews").fetchall()
 # for val in us:
 #     print(val)
 # db.commit()
@@ -31,4 +31,12 @@ engine = create_engine(db_uri)
 #                    {"isbn": row['isbn'], "title": row['title'], "author": row['author'], "year": row['year']})
 #         print(row['isbn'], row['title'], row['author'], row['year'])
 #         db.commit()
+#
+# engine.execute('CREATE TABLE "reviews" ('
+#                'isbn VARCHAR,'
+#                'userid VARCHAR ,'
+#                'comment VARCHAR,'
+#                'rating INTEGER,'
+#                'timestamp TIMESTAMP )')
 
+# engine.execute('DROP TABLE reviews')
