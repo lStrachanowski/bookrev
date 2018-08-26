@@ -112,6 +112,7 @@ def rating(rating=None,isbn=None):
         for value in sr:
             if(value[1] == str(user_id[0])):
                 db.execute("UPDATE reviews SET rating=:rating_val WHERE userid=:uid AND isbn=:isbn_val",{'rating_val':rating, 'uid':str(user_id[0]), 'isbn_val':isbn})
+                db.execute("UPDATE reviews SET username=:user_val WHERE userid=:uid AND isbn=:isbn_val",{'user_val':usernamedisplay, 'uid':str(user_id[0]),'isbn_val':isbn})
                 db.commit()
                 return redirect(url_for('book_route',isbn=isbn))
         else:
@@ -126,16 +127,17 @@ def rating(rating=None,isbn=None):
 
 @app.route('/book/<isbn>', methods=['GET','POST'])
 def book_route(isbn):
+    global usernamedisplay
     if usernamedisplay in session:
+        sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
+        ur = db.execute("SELECT * FROM reviews WHERE isbn=:searchisbn", {'searchisbn':isbn}).fetchall()
+        user_id = db.execute("SELECT id FROM users WHERE username=:unameval",{'unameval': usernamedisplay}).first()
         if request.method == 'GET':
             api_request = 'https://www.goodreads.com/book/review_counts.json?isbns=' + isbn + '&key=oVeYIluiDTM5qYO74SzGUA'
             data = urllib.request.urlopen(api_request).read().decode()
             goodreads_data = json.loads(data)
             rating_data = goodreads_data["books"][0]
             u_score = None
-            sr = db.execute("SELECT * FROM books WHERE isbn=:searchisbn", {'searchisbn': isbn}).fetchall()
-            ur = db.execute("SELECT * FROM reviews WHERE isbn=:searchisbn", {'searchisbn':isbn}).fetchall()
-            user_id = db.execute("SELECT id FROM users WHERE username=:unameval",{'unameval': usernamedisplay}).first()
             if ur:
                 for value in ur:
                     if value[1] == str(user_id[0]):
@@ -147,11 +149,22 @@ def book_route(isbn):
         else:
             post_time = time.asctime(time.localtime(time.time()))
             comment_text = request.form.get('textfield')
-            # rating_value =
-
-            # db.execute("INSERT INTO reviews(isbn,userid,comment,rating,timestamp) VALUES (:isbn,:userid,:comment,:rating,:timestamp)",
-            # {'isbn': 123,'userid':id,'comment':comment_text, 'rating':5,'timestamp':post_time})
-            return 'comment added'
+            if ur:
+                for value in ur:
+                    # if value[1] == str(user_id[0]) and value[2]:
+                    #     return redirect(url_for('book_route',isbn=isbn)) 
+                    if value[1] == str(user_id[0]) and value[2] is None:
+                        db.execute("UPDATE reviews SET comment=:comments_val WHERE userid=:uid AND isbn=:isbn_val",{'comments_val':comment_text, 'uid':str(user_id[0]), 'isbn_val':isbn})
+                        db.execute("UPDATE reviews SET timestamp=:time_val WHERE userid=:uid AND isbn=:isbn_val",{'time_val':post_time, 'uid':str(user_id[0]),'isbn_val':isbn})
+                        db.execute("UPDATE reviews SET username=:user_val WHERE userid=:uid AND isbn=:isbn_val",{'user_val':usernamedisplay, 'uid':str(user_id[0]),'isbn_val':isbn})
+                        db.commit()
+                        return redirect(url_for('book_route',isbn=isbn))         
+            else:
+                db.execute("INSERT INTO reviews(isbn,userid,comment,timestamp,username) VALUES (:isbn,:userid,:comment,:timestamp,:username)",
+                {'isbn': isbn,'userid':str(user_id[0]),'comment':comment_text,'timestamp':post_time, 'username':usernamedisplay})
+                db.commit()
+                return redirect(url_for('book_route',isbn=isbn)) 
+            
 
 @app.route('/api/<isbn>')
 def api(isbn):
