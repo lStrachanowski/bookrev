@@ -142,6 +142,10 @@ def book_route(isbn):
                 for value in ur:
                     if value[1] == str(user_id[0]):
                         u_score = value[3]
+                    if value[1] == str(user_id[0]) and value[2]:
+                        return render_template('book_commented.html', title=sr[0].title, year=sr[0].year, author=sr[0].author,
+                                bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
+                                total=rating_data['work_reviews_count'], usernamedisplay=usernamedisplay,user_score=u_score, comments=ur,message="You have already commmented this book!")
             return render_template('book.html', title=sr[0].title, year=sr[0].year, author=sr[0].author,
                                    bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
                                    total=rating_data['work_reviews_count'], usernamedisplay=usernamedisplay,user_score=u_score,comments=ur)
@@ -151,14 +155,12 @@ def book_route(isbn):
             comment_text = request.form.get('textfield')
             if ur:
                 for value in ur:
-                    # if value[1] == str(user_id[0]) and value[2]:
-                    #     return redirect(url_for('book_route',isbn=isbn)) 
                     if value[1] == str(user_id[0]) and value[2] is None:
                         db.execute("UPDATE reviews SET comment=:comments_val WHERE userid=:uid AND isbn=:isbn_val",{'comments_val':comment_text, 'uid':str(user_id[0]), 'isbn_val':isbn})
                         db.execute("UPDATE reviews SET timestamp=:time_val WHERE userid=:uid AND isbn=:isbn_val",{'time_val':post_time, 'uid':str(user_id[0]),'isbn_val':isbn})
                         db.execute("UPDATE reviews SET username=:user_val WHERE userid=:uid AND isbn=:isbn_val",{'user_val':usernamedisplay, 'uid':str(user_id[0]),'isbn_val':isbn})
                         db.commit()
-                        return redirect(url_for('book_route',isbn=isbn))         
+                        return redirect(url_for('book_route',isbn=isbn))           
             else:
                 db.execute("INSERT INTO reviews(isbn,userid,comment,timestamp,username) VALUES (:isbn,:userid,:comment,:timestamp,:username)",
                 {'isbn': isbn,'userid':str(user_id[0]),'comment':comment_text,'timestamp':post_time, 'username':usernamedisplay})

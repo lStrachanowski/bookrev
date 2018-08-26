@@ -57,13 +57,12 @@
             </div>
         {% endif %}    
     <div class="book-flex-container-item">
+        
          <form action="{{url_for('book_route',isbn=bookisbn)}}" method="POST">
         <p class="date-format">Add comment</p>
             <div>
                 <textarea rows="4" class="textarea-forma" name="textfield"></textarea>
             </div>
-    <!-- </div> -->
-    <!-- <div class="book-flex-container-item"> -->
         <div class="buttons-position-comment">
         
             <button class="front-buttons-comments">
@@ -71,6 +70,7 @@
             </button>
         </div>
         </form>
+
     </div>
     
 
