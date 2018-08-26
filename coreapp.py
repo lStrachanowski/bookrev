@@ -142,7 +142,7 @@ def book_route(isbn):
                         u_score = value[3]
             return render_template('book.html', title=sr[0].title, year=sr[0].year, author=sr[0].author,
                                    bookisbn=sr[0].isbn, rating=rating_data['average_rating'],
-                                   total=rating_data['work_reviews_count'], usernamedisplay=usernamedisplay,user_score=u_score)
+                                   total=rating_data['work_reviews_count'], usernamedisplay=usernamedisplay,user_score=u_score,comments=ur)
 
         else:
             post_time = time.asctime(time.localtime(time.time()))
