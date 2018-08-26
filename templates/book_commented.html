@@ -1,0 +1,62 @@
+{% extends 'layout.html' %} {% block header %}
+
+<span class="logged-style">
+    <span>{{usernamedisplay}}</span>
+    <a href="{{url_for('index')}}">
+        <span class="logout-color">Log out</span>
+    </a>
+</span>
+{% endblock %} {% block maincontent %}
+<div class="book-flex-container">
+    <div class="exit-button push-right">
+        <div class="x-position">
+            <a href="{{url_for('results')}}">X</a>
+        </div>
+    </div>
+</div>
+<div class="book-flex-container">
+    <div class="book-flex-container-item">
+        "{{title}}" - {{author}}
+    </div>
+
+    <div class="book-flex-container-item">
+        <p>Rok publikacji: {{year}}</p>
+        <p>ISBN:{{bookisbn}}</p>
+    </div>
+
+    <div class="book-flex-container-item">
+        <p class="score">{{rating}} / 5</p>
+        <p class="count">{{total}}</p>
+    </div>
+    {% for val in comments%}
+    <div class="book-flex-container-item">
+        <p class="date-format">{{val.timestamp}} user:{{val.username}}</p>
+        {{val.comment}}
+    </div>
+    {% endfor %}
+        {% if user_score %}
+        <div class="book-flex-container-item">
+                <div class="book-flex-container container-override">
+                  Your rate:  {{user_score}}
+                </div>
+        </div>
+        {% else %}
+            <div class="book-flex-container-item">
+                    Rate book:
+                    <div class="book-flex-container container-override">
+                        <a href="{{url_for('rating',rating=1,isbn=bookisbn)}}"><div class="score-style" name="1" type="submit">1</div></a>
+                        <a href="{{url_for('rating',rating=2,isbn=bookisbn)}}"><div class="score-style" name="2" type="submit">2</div></a>
+                        <a href="{{url_for('rating',rating=3,isbn=bookisbn)}}"><div class="score-style" name="3" type="submit">3</div></a>
+                        <a href="{{url_for('rating',rating=4,isbn=bookisbn)}}"><div class="score-style" name="4" type="submit">4</div></a>
+                        <a href="{{url_for('rating',rating=5,isbn=bookisbn)}}"><div class="score-style" name="5" type="submit">5</div></a>
+                    </div>
+            </div>
+        {% endif %}    
+    <div class="book-flex-container-item">
+        {{message}}
+    </div>
+    
+
+
+</div>
+{% endblock %}

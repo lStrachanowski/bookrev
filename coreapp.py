@@ -111,9 +111,10 @@ def rating(rating=None,isbn=None):
     if sr:
         for value in sr:
             if(value[1] == str(user_id[0])):
+                db.execute("UPDATE reviews SET rating=:rating_val WHERE userid=:uid AND isbn=:isbn_val",{'rating_val':rating, 'uid':str(user_id[0]), 'isbn_val':isbn})
+                db.commit()
                 return redirect(url_for('book_route',isbn=isbn))
         else:
-            print('conditino don`t works')
             db.execute("INSERT INTO reviews(isbn,rating,userid) VALUES(:isbn,:rating,:userid)",{"isbn":isbn, "rating":rating,"userid":user_id[0]})
             db.commit()
             return redirect(url_for('book_route',isbn=isbn))     

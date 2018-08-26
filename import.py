@@ -19,10 +19,10 @@ engine = create_engine(db_uri)
 #
 # engine.execute('DROP TABLE users')
 
-# db = scoped_session(sessionmaker(bind=engine))
-# us = db.execute("SELECT * FROM reviews").fetchall()
-# for val in us:
-#     print(val)
+db = scoped_session(sessionmaker(bind=engine))
+us = db.execute("SELECT * FROM reviews").fetchall()
+for val in us:
+    print(val)
 # db.commit()
 # with open('C:/Users/Tomasy/Desktop/project1/project1/books.csv', newline='') as csvfile:
 #     freader = csv.DictReader(csvfile, delimiter=',')
@@ -37,6 +37,7 @@ engine = create_engine(db_uri)
 #                'userid VARCHAR ,'
 #                'comment VARCHAR,'
 #                'rating INTEGER,'
+#                'username VARCHAR,'
 #                'timestamp TIMESTAMP )')
 
 # engine.execute('DROP TABLE reviews')
